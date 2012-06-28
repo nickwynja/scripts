@@ -9,87 +9,74 @@ $time = date("H-i-s");
 
 if ($type == 'scratch') {
 
-        $file_name = 'Scratchpad_' . $date . '.txt';
-        $file_path = '/home/blog/Dropbox/Notes/';
-        $file = $file_path . $file_name;
-        chmod($file, 0777);
-        
-        if ('' == file_get_contents($file)) {
-          $scratch = $note; }
-        else {
-          $scratch = "\n\n" . $note; }
+    $file_name = 'Scratchpad_' . $date . '.txt';
+    $file_path = '/home/blog/Dropbox/Notes/';
+    $file = $file_path . $file_name;
+    
+    if ('' == file_get_contents($file)) {
+      $text = $note; }
+    else {
+      $text = "\n\n" . $note; }
 
-        file_put_contents($file, $scratch, FILE_APPEND);
 }
 
 if ($type == 'hm-draft') {
 
-        $ext = '.md';   
-        $file_name = $date . '_' . $time . $ext;
-        $file_path = '/home/blog/Dropbox/hackmake/drafts/';
-        $file = $file_path . $file_name;
-        chmod($file, 0777);
-        file_put_contents($file, $note);
+    $ext = '.md';   
+    $file_name = $date . '_' . $time . $ext;
+    $file_path = '/home/blog/Dropbox/hackmake/drafts/';
+    $file = $file_path . $file_name;
+    $text = $note;
 }
 
 if ($type == 'wr-draft') {
 
-        $ext = '.md';   
-        $file_name = $date . '_' . $time . $ext;
-        $file_path = '/home/blog/Dropbox/nickwynja/writing/drafts/';
-        $file = $file_path . $file_name;
-        chmod($file, 0777);
-        file_put_contents($file, $note);
+    $ext = '.md';   
+    $file_name = $date . '_' . $time . $ext;
+    $file_path = '/home/blog/Dropbox/nickwynja/writing/drafts/';
+    $file = $file_path . $file_name;
+    $text = $note;
 }
 
 if ($type == 'new') {
 
-        $ext = '.txt';
-        $file_name = $date . '_' . $time . $ext;
-        $file_path = '/home/blog/Dropbox/Notes/';
-        $file = $file_path . $file_name;
-        chmod($file, 0777);
-
-        file_put_contents($file, $note);
+    $ext = '.txt';
+    $file_name = $date . '_' . $time . $ext;
+    $file_path = '/home/blog/Dropbox/Notes/';
+    $file = $file_path . $file_name;
+    $text = $note;
 }
 
 if ($type == 'new') {
 
-        $ext = '.txt';
-        $file_name = $date . '_' . $time . $ext;
-        $file_path = '/home/blog/Dropbox/Notes/';
-        $file = $file_path . $file_name;
-        chmod($file, 0777);
-
-        file_put_contents($file, $note);
+    $ext = '.txt';
+    $file_name = $date . '_' . $time . $ext;
+    $file_path = '/home/blog/Dropbox/Notes/';
+    $file = $file_path . $file_name;
+    $text = $note;        
 }
 
 if ($type == 'book-list') {
 
-        $file_name = 'Books to Read.txt';
-        $file_path = '/home/blog/Dropbox/Notes/';
-        $file = $file_path . $file_name;
-        $text = "\n" . $note;
-        chmod($file, 0777);
-
-        file_put_contents($file, $text, FILE_APPEND);
-        
+    $file_name = 'Books to Read.txt';
+    $file_path = '/home/blog/Dropbox/Notes/';
+    $file = $file_path . $file_name;
+    $text = "\n" . $note;
 }
 
 if ($type == 'wiki-list') {
 
-        $file_name = 'Things to Wiki.txt';
-        $file_path = '/home/blog/Dropbox/Notes/';
-        $file = $file_path . $file_name;
-        $text = "\n" . $note;
-        chmod($file, 0777);
-
-        file_put_contents($file, $text, FILE_APPEND);
-
+    $file_name = 'Things to Wiki.txt';
+    $file_path = '/home/blog/Dropbox/Notes/';
+    $file = $file_path . $file_name;
+    $text = "\n" . $note;
 }
 
-// header('Content-Type: text/plain; charset=utf-8');
-// echo "Saving to [$output_filename]:\n-----------------------\n$draft_contents\n------------------------\n";
+// Save file
+
+chmod($file, 0777);
+file_put_contents($file, $text, FILE_APPEND);
+
 
 ?>
 <html>
