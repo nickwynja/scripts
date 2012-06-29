@@ -6,8 +6,8 @@ $type = trim($_GET['t']);
 $note = trim($_GET['n']);
 $date = date("y-m-d");
 $time = date("H-i-s");
-// $notes_path = '/home/blog/Dropbox/Notes/';
-$notesPath = '~/Dropbox/Documents/Notes/';
+$notes_path = '/home/blog/Dropbox/Notes/';
+//$notesPath = '~/Dropbox/Documents/Notes/';
 
 function slugify($text) {
  
@@ -35,6 +35,8 @@ function slugify($text) {
 }
 
 $chunks = explode("\n\n", $note);
+$draft_header = explode("====", $note);
+$draft_title = $draft_header[0];
 $title = $chunks[0];
 $slug = slugify($title);
 
