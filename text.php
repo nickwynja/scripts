@@ -7,7 +7,7 @@ $note = trim($_GET['n']);
 $date = date("y-m-d");
 $time = date("H-i-s");
 $notes_path = '/home/blog/Dropbox/Notes/';
-//$notesPath = '~/Dropbox/Documents/Notes/';
+// $notes_path = '/Users/nickwynja/Dropbox/Documents/Notes/';
 
 function slugify($text) {
  
@@ -73,6 +73,8 @@ if ($type == 'wr-draft') {
 
 if ($type == 'new') {
 
+    unset($chunks[0]);
+    $note = implode($chunks);
     $ext = '.txt';
     $file_name = $title . $ext;
     $file_path = $notes_path;
