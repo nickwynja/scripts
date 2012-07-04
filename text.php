@@ -98,6 +98,22 @@ if ($type == 'wiki-list') {
     $text = "\n" . $note;
 }
 
+if ($type == 'someday') {
+
+    $file_name = 'Someday Maybe xsm.txt';
+    $file_path = $notes_path;
+    $file = $file_path . $file_name;
+    $text = "\n" . $note;
+}
+
+if ($type == 'hm-topics') {
+
+    $file_name = 'HackMake Topics xsm.txt';
+    $file_path = $notes_path;
+    $file = $file_path . $file_name;
+    $text = "\n" . $note;
+}
+
 // Save file
 
 chmod($file, 0777);
