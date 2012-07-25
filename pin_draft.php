@@ -3,7 +3,7 @@
 date_default_timezone_set('America/New_York');
 
 $pinUser = 'nickwynja';
-$pinPass = '';
+$pinPass = 'Ee8eYd9TgraGV9TKU7BM';
 $pinAPI = 'api.pinboard.in/v1/';
 $pinUpdate = 'posts/update';
 $pinGet = 'posts/get';
@@ -43,23 +43,30 @@ for ($i = 0; $i >= 0; $i++) {
 
   if ($updateTime != $triggeredTime) {
    
-    $getURL = 'https://' . $pinUser . ':' . $pinPass . '@' . $pinAPI . $pinGet . '?tag=hm';
+    $getURL = 'https://' . $pinUser . ':' . $pinPass . '@' . $pinAPI . $pinGet . '?tag=hm&meta=yes';
     $xml = simplexml_load_string(get_data($getURL));
-    
-    $mostRecent = count($xml->post) - 1;
+
+    if (property_exists($xml, 'post')) {
+              
+      $mostRecent = count($xml->post) - 1;
+          
+      $postURL = $xml->post[$mostRecent]->attributes()->href;
+      $postSlug = slugify($xml->post[$mostRecent]->attributes()->description);
+      $postTitle = $xml->post[$mostRecent]->attributes()->description;
+      $postText = $xml->post[$mostRecent]->attributes()->extended;
+      
+      if (($xml->post[$mostRecent]->attributes()->meta) != $meta) {
         
-    $postURL = $xml->post[$mostRecent]->attributes()->href;
-    $postSlug = slugify($xml->post[$mostRecent]->attributes()->description);
-    $postTitle = $xml->post[$mostRecent]->attributes()->description;
-    $postText = $xml->post[$mostRecent]->attributes()->extended;
-  
-    $draft = $postTitle . "\n====\nlink: " . $postURL . "\npublish-not\n\n" . $postText;
+        $draft = $postTitle . "\n====\nlink: " . $postURL . "\npublish-not\n\n" . $postText;
+        $meta = $xml->post[$mostRecent]->attributes()->meta;    
+        $file = '/home/blog/Dropbox/hackmake/drafts/' . $postSlug . '.md';
+        $msg = @file_put_contents($file, $draft);
+        ($msg == FALSE) ? error_log('Draft write failed.') : error_log($postTitle . ' draft created.');
+        $triggeredTime = $updateTime; 
     
-    $file = '/home/blog/Dropbox/hackmake/drafts/' . $postSlug . '.md';
-    file_put_contents($file, $draft);
-     
-    $triggeredTime = $updateTime;
-    error_log($postTitle . ' draft added.'); 
+      }
+    }
+    
     sleep(3);
     
   } else {
