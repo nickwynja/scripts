@@ -2,71 +2,84 @@
 
 date_default_timezone_set('America/New_York');
 
-$pin_user = '';
-$pin_pass = '';
-$pin_url = 'api.pinboard.in/v1/';
-$pin_method = 'posts/update';
+$pinUser = 'nickwynja';
+$pinPass = '';
+$pinAPI = 'api.pinboard.in/v1/';
+$pinUpdate = 'posts/update';
+$pinGet = 'posts/get';
 
-function xml_attribute($object, $attribute)
-{
+$pinURL = 'https://' . $pinUser . ':' . $pinPass . '@' . $pinAPI . $pinUpdate;
+
+function get_data($url) {
+  $ch = curl_init();
+  $timeout = 5;
+  curl_setopt($ch,CURLOPT_URL,$url);
+  curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+  curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
+  $data = curl_exec($ch);
+  curl_close($ch);
+  return $data;
+  }
+
+function xml_attribute($object, $attribute){
     if(isset($object[$attribute]))
         return (string) $object[$attribute];
+  }
+
+function slugify($text) {
+ 
+  // replace non letter or digits by -
+  $text = preg_replace('~[^\\pL\d]+~u', '-', $text);
+
+  // trim
+  $text = trim($text, '-');
+
+  // transliterate
+  $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+
+  // lowercase
+  $text = strtolower($text);
+
+  // remove unwanted characters
+  $text = preg_replace('~[^-\w]+~', '', $text);
+
+  if (empty($text))
+  {
+    return 'n-a';
+  }
+
+  return $text;
 }
 
-$pin_url = 'https://' . $pin_user . ':' . $pin_pass . '@' . $pin_url . $pin_method;
-
-$ifttt_user = '';
-$ifttt_pass = '';
-$task_id = '';
-$ifttt_login = 'https://ifttt.com/login?login=' . $ifttt_user . '&password=' . $ifttt_pass;
-$task_url = 'http://ifttt.com/tasks/' . $task_id . '/force_run';
-
 for ($i = 0; $i >= 0; $i++) {
-  
-  $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, $pin_url);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  $resp = curl_exec($ch);
-  curl_close($ch);
-  
-  $xml = simplexml_load_string($resp);
-  
-  $update_time = strtotime(xml_attribute($xml, 'time'));
-  
-  if ($update_time != $triggered_time) {
-    
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_COOKIEJAR, "/tmp/cookieIFTTT");
-    curl_setopt($ch, CURLOPT_URL, $ifttt_login);
-    $resp1 = curl_exec($ch);
-    curl_close ($ch);
-      
-    unset($ch);
+  $xml = simplexml_load_string(get_data($pinURL));
+  $updateTime = strtotime(xml_attribute($xml, 'time'));
+  $triggeredTime = 0;
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-    curl_setopt($ch, CURLOPT_COOKIEFILE, "/tmp/cookieIFTTT");
-    curl_setopt($ch, CURLOPT_URL, $task_url);
-    $resp2 = curl_exec($ch);
-    curl_close ($ch);
-
-    error_log($resp1);
-    error_log($resp2);
-    
-    $triggered_time = $update_time;
-    
-    error_log('Updated at ' . $triggered_time);
-    
-    sleep(5);
-    
-  }
+  if ($updateTime != $triggeredTime) {
+   
+  $pinURL = 'https://' . $pinUser . ':' . $pinPass . '@' . $pinAPI . $pinGet . '?tag=hm';
+  $xml = simplexml_load_string(get_data($pinURL));
   
-  else {
+  $postURL = $xml->post[0]->attributes()->href;
+  $postSlug = slugify($xml->post[0]->attributes()->description);
+  $postTitle = $xml->post[0]->attributes()->description;
+  $postText = $xml->post[0]->attributes()->extended;
+
+  $draft = $postTitle . "\n====\nlink: " . $postURL . "\npublish-not\n\n" . $postText;
+
+  $file = '/home/blog/Dropbox/hackmake/drafts/' . $postSlug . '.md';
+  file_put_contents($file, $draft);
+   
+  $triggeredTime = $updateTime;
+  error_log('Updated at ' . $triggeredTime); 
+  sleep(5);
+    
+  } else {
   
   error_log('Nothing to update.');
   sleep(5);
   
   }
-  
 }
 ?>
