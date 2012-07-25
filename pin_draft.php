@@ -54,7 +54,6 @@ for ($i = 0; $i >= 0; $i++) {
     $postText = $xml->post[$mostRecent]->attributes()->extended;
   
     $draft = $postTitle . "\n====\nlink: " . $postURL . "\npublish-not\n\n" . $postText;
-    echo($draft);
     
     $file = '/home/blog/Dropbox/hackmake/drafts/' . $postSlug . '.md';
     file_put_contents($file, $draft);
