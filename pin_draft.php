@@ -7,8 +7,7 @@ $pinPass = '';
 $pinAPI = 'api.pinboard.in/v1/';
 $pinUpdate = 'posts/update';
 $pinGet = 'posts/get';
-
-$pinURL = 'https://' . $pinUser . ':' . $pinPass . '@' . $pinAPI . $pinUpdate;
+$triggeredTime = 0;
 
 function get_data($url) {
   $ch = curl_init();
@@ -19,66 +18,54 @@ function get_data($url) {
   $data = curl_exec($ch);
   curl_close($ch);
   return $data;
-  }
+}
 
 function xml_attribute($object, $attribute){
-    if(isset($object[$attribute]))
+  if(isset($object[$attribute]))
         return (string) $object[$attribute];
-  }
+}
 
 function slugify($text) {
- 
-  // replace non letter or digits by -
   $text = preg_replace('~[^\\pL\d]+~u', '-', $text);
-
-  // trim
   $text = trim($text, '-');
-
-  // transliterate
   $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
-
-  // lowercase
   $text = strtolower($text);
-
-  // remove unwanted characters
   $text = preg_replace('~[^-\w]+~', '', $text);
-
-  if (empty($text))
-  {
-    return 'n-a';
-  }
 
   return $text;
 }
 
 for ($i = 0; $i >= 0; $i++) {
-  $xml = simplexml_load_string(get_data($pinURL));
+
+  $updateURL = 'https://' . $pinUser . ':' . $pinPass . '@' . $pinAPI . $pinUpdate;
+  $xml = simplexml_load_string(get_data($updateURL));
   $updateTime = strtotime(xml_attribute($xml, 'time'));
-  $triggeredTime = 0;
 
   if ($updateTime != $triggeredTime) {
    
-  $pinURL = 'https://' . $pinUser . ':' . $pinPass . '@' . $pinAPI . $pinGet . '?tag=hm';
-  $xml = simplexml_load_string(get_data($pinURL));
+    $getURL = 'https://' . $pinUser . ':' . $pinPass . '@' . $pinAPI . $pinGet . '?tag=hm';
+    $xml = simplexml_load_string(get_data($getURL));
+    
+    $mostRecent = count($xml->post) - 1;
+        
+    $postURL = $xml->post[$mostRecent]->attributes()->href;
+    $postSlug = slugify($xml->post[$mostRecent]->attributes()->description);
+    $postTitle = $xml->post[$mostRecent]->attributes()->description;
+    $postText = $xml->post[$mostRecent]->attributes()->extended;
   
-  $postURL = $xml->post[0]->attributes()->href;
-  $postSlug = slugify($xml->post[0]->attributes()->description);
-  $postTitle = $xml->post[0]->attributes()->description;
-  $postText = $xml->post[0]->attributes()->extended;
-
-  $draft = $postTitle . "\n====\nlink: " . $postURL . "\npublish-not\n\n" . $postText;
-
-  $file = '/home/blog/Dropbox/hackmake/drafts/' . $postSlug . '.md';
-  file_put_contents($file, $draft);
-   
-  $triggeredTime = $updateTime;
-  error_log('Updated at ' . $triggeredTime); 
-  sleep(5);
+    $draft = $postTitle . "\n====\nlink: " . $postURL . "\npublish-not\n\n" . $postText;
+    echo($draft);
+    
+    $file = '/home/blog/Dropbox/hackmake/drafts/' . $postSlug . '.md';
+    file_put_contents($file, $draft);
+     
+    $triggeredTime = $updateTime;
+    error_log($postTitle ' draft added.'); 
+    sleep(3);
     
   } else {
   
-  error_log('Nothing to update.');
-  sleep(5);
+    sleep(3);
   
   }
 }
