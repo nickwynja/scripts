@@ -60,7 +60,7 @@ for ($i = 0; $i >= 0; $i++) {
     file_put_contents($file, $draft);
      
     $triggeredTime = $updateTime;
-    error_log($postTitle ' draft added.'); 
+    error_log($postTitle . ' draft added.'); 
     sleep(3);
     
   } else {
