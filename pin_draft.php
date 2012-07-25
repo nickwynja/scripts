@@ -3,7 +3,7 @@
 date_default_timezone_set('America/New_York');
 
 $pinUser = 'nickwynja';
-$pinPass = 'Ee8eYd9TgraGV9TKU7BM';
+$pinPass = '';
 $pinAPI = 'api.pinboard.in/v1/';
 $pinUpdate = 'posts/update';
 $pinGet = 'posts/get';
@@ -54,6 +54,7 @@ for ($i = 0; $i >= 0; $i++) {
       $postSlug = slugify($xml->post[$mostRecent]->attributes()->description);
       $postTitle = $xml->post[$mostRecent]->attributes()->description;
       $postText = $xml->post[$mostRecent]->attributes()->extended;
+      $meta = '';
       
       if (($xml->post[$mostRecent]->attributes()->meta) != $meta) {
         
