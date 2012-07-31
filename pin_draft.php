@@ -2,11 +2,19 @@
 
 date_default_timezone_set('America/New_York');
 
-$pinUser = 'nickwynja';
+/* Pinboard.in Credentials and Tag */
+$pinUser = '';
 $pinPass = '';
+$pinTag = '';
+
+/* Draft location and extension */
+$draftPath = '';
+$draftExt = '.md';
+
 $pinAPI = 'api.pinboard.in/v1/';
 $pinUpdate = 'posts/update';
 $pinGet = 'posts/get';
+
 $triggeredTime = 0;
 
 function get_data($url) {
@@ -43,7 +51,7 @@ for ($i = 0; $i >= 0; $i++) {
 
   if ($updateTime != $triggeredTime) {
    
-    $getURL = 'https://' . $pinUser . ':' . $pinPass . '@' . $pinAPI . $pinGet . '?tag=hm&meta=yes';
+    $getURL = 'https://' . $pinUser . ':' . $pinPass . '@' . $pinAPI . $pinGet . '?tag=' . $pinTag . '&meta=yes';
     $xml = simplexml_load_string(get_data($getURL));
 
     if (property_exists($xml, 'post')) {
@@ -55,15 +63,25 @@ for ($i = 0; $i >= 0; $i++) {
       $postTitle = $xml->post[$mostRecent]->attributes()->description;
       $postText = $xml->post[$mostRecent]->attributes()->extended;
       $meta = '';
-      
+
       if (($xml->post[$mostRecent]->attributes()->meta) != $meta) {
         
-        $draft = $postTitle . "\n====\nlink: " . $postURL . "\npublish-not\n\n" . $postText;
+        $draft = $postTitle . "\n====\nlink: " . $postURL . "  \npublish-not  \n\n" . $postText;
         $meta = $xml->post[$mostRecent]->attributes()->meta;    
-        $file = '/home/blog/Dropbox/hackmake/drafts/' . $postSlug . '.md';
-        $msg = @file_put_contents($file, $draft);
-        ($msg == FALSE) ? error_log('Draft write failed.') : error_log($postTitle . ' draft created.');
-        $triggeredTime = $updateTime; 
+        $file = $draftPath . $postSlug . $draftExt;
+	$date = date('y-m-d H:i:s'); 
+
+	if (!file_exists($file)) {
+          $msg = @file_put_contents($file, $draft);
+          ($msg == FALSE) ? error_log('Draft write failed.') : error_log($postTitle . ' draft created at ' . $date);
+	
+	} else {
+
+	  error_log($postTitle . ' draft already exists.');
+	
+	}      
+
+	$triggeredTime = $updateTime; 
     
       }
     }
@@ -71,7 +89,7 @@ for ($i = 0; $i >= 0; $i++) {
     sleep(3);
     
   } else {
-  
+    
     sleep(3);
   
   }
