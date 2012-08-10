@@ -1,5 +1,11 @@
 #!/usr/bin/python
 
+##################################
+#  Add `* * * * * sudo python /path/to/pin_draft.py` to crontab
+#  Script will loop 18 times, which takes about a minute then die.
+#  Cron will trigger another instance, so it is essentially always running.
+#  Meta is saved a temp file locate in /tmp/pin_draft.meta
+
 import json
 import urllib2
 import re
@@ -17,11 +23,11 @@ now =  str(datetime.datetime.now())
 
 # Pinboard.in Credentials and Tag
 
-pinToken = 'nickwynja:41B828BD4C8B854841EE'
-pinTag = 'hm'
+pinToken = ''
+pinTag = ''
 
 # Draft location and extension
-draftPath = '/home/blog/Dropbox/hackmake/drafts/'
+draftPath = '/path/to/drafts/'
 draftExt = '.md'
 
 pinAPI = 'api.pinboard.in/v1/'
