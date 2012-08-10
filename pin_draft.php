@@ -2,13 +2,22 @@
 
 date_default_timezone_set('America/New_York');
 
+/*
+
+# Install/Run Notes
+
+* Add `# # # # # php /path/to/script/pin_draft.php` to crontab.
+* Script will loop through 18 times, which should take about a minute, then die
+* Cron will run the script every minute so you should never have downtime
+
+*/
+
 /* Pinboard.in Credentials and Tag */
-$pinUser = '';
-$pinPass = '';
-$pinTag = '';
+$pinToken = '';
+$pinTag = ''; //Drafts will only be created for pins with this tag. Can't be empty.
 
 /* Draft location and extension */
-$draftPath = '';
+$draftPath = '/path/to/drafts/';
 $draftExt = '.md';
 
 $pinAPI = 'api.pinboard.in/v1/';
@@ -43,15 +52,15 @@ function slugify($text) {
   return $text;
 }
 
-for ($i = 0; $i >= 0; $i++) {
+for ($i = 0; $i < 18; $i++) {
 
-  $updateURL = 'https://' . $pinUser . ':' . $pinPass . '@' . $pinAPI . $pinUpdate;
+  $updateURL = 'https://' . $pinAPI . $pinUpdate . '?auth_token=' . $pinToken;
   $xml = simplexml_load_string(get_data($updateURL));
   $updateTime = strtotime(xml_attribute($xml, 'time'));
 
   if ($updateTime != $triggeredTime) {
    
-    $getURL = 'https://' . $pinUser . ':' . $pinPass . '@' . $pinAPI . $pinGet . '?tag=' . $pinTag . '&meta=yes';
+    $getURL = 'https://' . $pinAPI . $pinGet . '?auth_token=' . $pinToken . '&tag=' . $pinTag . '&meta=yes';
     $xml = simplexml_load_string(get_data($getURL));
 
     if (property_exists($xml, 'post')) {
@@ -72,7 +81,7 @@ for ($i = 0; $i >= 0; $i++) {
 	$date = date('y-m-d H:i:s'); 
 
 	if (!file_exists($file)) {
-          $msg = @file_put_contents($file, $draft);
+          $msg = file_put_contents($file, $draft);
           ($msg == FALSE) ? error_log('Draft write failed.') : error_log($postTitle . ' draft created at ' . $date);
 	
 	} else {
@@ -81,9 +90,14 @@ for ($i = 0; $i >= 0; $i++) {
 	
 	}      
 
-	$triggeredTime = $updateTime; 
+	$triggeredTime = $updateTime;
     
       }
+
+    } else {
+
+      $triggeredTime = $updateTime;
+
     }
     
     sleep(3);
@@ -91,7 +105,7 @@ for ($i = 0; $i >= 0; $i++) {
   } else {
     
     sleep(3);
-  
+ 
   }
 }
 ?>
