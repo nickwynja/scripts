@@ -4,11 +4,13 @@ date_default_timezone_set('America/New_York');
 
 /*
 
-# Install/Run Notes
+# YOU PROBABLY SHOULDN'T USE THIS. USE THE [PYTHON SCRIPT] INSTEAD
 
 * Add `# # # # # php /path/to/script/pin_draft.php` to crontab.
 * Script will loop through 18 times, which should take about a minute, then die
 * Cron will run the script every minute so you should never have downtime
+
+[PYTHON SCRIPT]: https://github.com/nickwynja/scripts/blob/master/pin_draft.py
 
 */
 
