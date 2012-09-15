@@ -1,4 +1,5 @@
 import sys
+import re
 
 for arg in sys.argv:
   if arg == 'hackmake.org':
@@ -6,16 +7,19 @@ for arg in sys.argv:
     site = 'hackmake'
     siteName = arg
     siteURL = 'http://hackmake.org'
+    siteTitle =  'Hack / Make'
   if arg == 'nickwynja.com':
     gaugeID = '4f3dd737f5a1f54041000062'
     site = 'nickwynja'
     siteName = arg
     siteURL = 'http://nickwynja.com'
+    siteTitle = 'Nick Wynja'
   if arg == 'writteninmyfieldnotes.tumblr.com':
     gaugeID = '50077900613f5d5381000041'
     site = 'writteninmyfieldnotes'
     siteName = arg
     siteURL = 'http://writteninmyfieldnotes.tumblr.com'
+    siteTitle = ''
 
 authToken = '9e48a1a90a40302d8e7893ed73c0d0a9'
 APIurl = 'https://secure.gaug.es/gauges/' + gaugeID
@@ -69,6 +73,9 @@ f.write("## Views \n\n")
 
 for content in j['content']:
   title = content['title']
+  if title.endswith(siteTitle):
+    title = title[:-(len(siteTitle) + 3)]
+  print title
   uri = content['url']
   views = content['views']
   report = '[' + title + '](' + uri + ') : ' + str(views) + "  \n"
