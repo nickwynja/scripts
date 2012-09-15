@@ -1,24 +1,21 @@
 import sys
 
 for arg in sys.argv:
-  if arg == 'hackmake.org':
-    gaugeID = '4f3dd6b3f5a1f54057000060'
-    site = 'hackmake'
+  if arg == 'site1.com':
+    gaugeID = 'YOURGAUGEID'
+    site = 'site1'
     siteName = arg
-    siteURL = 'http://hackmake.org'
-    siteTitle = 'Hack / Make'
-  if arg == 'nickwynja.com':
-    gaugeID = '4f3dd737f5a1f54041000062'
-    site = 'nickwynja'
+    siteURL = 'http://site1.com'
+  if arg == 'site2.com':
+    gaugeID = 'YOURGAUGEID'
+    site = 'site2'
     siteName = arg
-    siteURL = 'http://nickwynja.com'
-    siteTitle = 'Nick Wynja'
-  if arg == 'writteninmyfieldnotes.tumblr.com':
-    gaugeID = '50077900613f5d5381000041'
-    site = 'writteninmyfieldnotes'
+    siteURL = 'http://site2.com'
+  if arg == 'site3.com':
+    gaugeID = 'YOURGAUGEID'
+    site = 'site3.com'
     siteName = arg
-    siteURL = 'http://writteninmyfieldnotes.tumblr.com'
-    siteTitle = ''
+    siteURL = 'http://site3.com'
 
 authToken = '9e48a1a90a40302d8e7893ed73c0d0a9'
 APIurl = 'https://secure.gaug.es/gauges/' + gaugeID
