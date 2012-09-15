@@ -1,5 +1,4 @@
 import sys
-import re
 
 for arg in sys.argv:
   if arg == 'hackmake.org':
@@ -7,7 +6,7 @@ for arg in sys.argv:
     site = 'hackmake'
     siteName = arg
     siteURL = 'http://hackmake.org'
-    siteTitle =  'Hack / Make'
+    siteTitle = 'Hack / Make'
   if arg == 'nickwynja.com':
     gaugeID = '4f3dd737f5a1f54041000062'
     site = 'nickwynja'
@@ -27,7 +26,7 @@ APIurl = 'https://secure.gaug.es/gauges/' + gaugeID
 authHeader = 'X-Gauges-Token'
 
 # Report Location
-filePath = '/Users/nickwynja/Desktop/'
+filePath = '/home/blog/Dropbox/Notes/'
 fileName = site + '-daily-report-' #date will be appended
 fileExt = '.md'
 
@@ -73,9 +72,8 @@ f.write("## Views \n\n")
 
 for content in j['content']:
   title = content['title']
-  if title.endswith(siteTitle):
-    title = title[:-(len(siteTitle) + 3)]
-  print title
+  if title.endswith(' ' + siteTitle):
+    title = title[:-len(siteTitle) - 3]
   uri = content['url']
   views = content['views']
   report = '[' + title + '](' + uri + ') : ' + str(views) + "  \n"
